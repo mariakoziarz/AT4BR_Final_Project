@@ -17,7 +17,13 @@ aminoacids <- data.frame(
 )
 
 server <- function(input, output, session) {
- 
+ values <- reactiveValues(
+    current_question = 1,
+    total_questions = 10,
+    correct_answers = 0,
+    answers = data.frame(question = character(10), answer = character(10), right_answer = character(10)),
+
+ )
  
 }
 

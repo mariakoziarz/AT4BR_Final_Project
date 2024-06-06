@@ -8,7 +8,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput(
-        "var",
+        "mode",
         label = "Choose a game mode",
         choices = c("mode","Structure", "One-letter code", "Three-letter code"),
         selected = "mode",
@@ -16,7 +16,8 @@ ui <- fluidPage(
       actionButton("start", "Start game")
     ),
      mainPanel(
-       uiOutput("game")
+       uiOutput("game"),
+       uiOutput("question")
      )
   )
 )

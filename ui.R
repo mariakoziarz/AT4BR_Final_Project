@@ -17,7 +17,8 @@ ui <- fluidPage(
     ),
      mainPanel(
        uiOutput("game"),
-       uiOutput("question")
+       uiOutput("question"),
+       tableOutput("results")
      )
   )
 )

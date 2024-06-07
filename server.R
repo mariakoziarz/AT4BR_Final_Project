@@ -69,6 +69,41 @@ server <- function(input, output, session) {
    }
  }
  )
+ observeEvent(input$submit, {
+   correct_answers <- aminoacids$name[values$no_repeats[current_question]]
+   input_answer <- input$answer
+   
+   if(input$mode == "Structure"){
+     values$answers$question[values$current_question] <-("Structure of " + aminoacids$threeletter_code[random_number])
+   } else if (input$mode == "One-letter code") {
+     values$answers$question[values$current_question] <- aminoacids$oneletter_code[random_number]
+   }else {
+     values$answers$question[values$current_question] <- aminoacids$threeletter_code[random_number]
+   }
+   values$answers$answer[values$current_question] <- input_answer
+   values$answers$right_answer[values$current_question] <- correct_answers
+   
+   if(tolower(input_answer) == tolower(input_answer)){
+     values$correct_answers <- values$correct_answers + 1
+   }
+   
+   if(values$current_question < values$total_questions){
+     values$current_question <- values$current_question + 1
+     updateTextInput(session, "answer", value = "")
+   } else {
+     output$game <- renderUI({
+       h3("Results:")
+     })
+    output$results <- renderTable({
+      cbind(values$answers, 
+            if (tolower(values$answers$answer) == tolower(values$answers$right_answer)){
+              Results = "Right"
+            }else{
+              Results = "Wrong"
+            })
+    })
+   }
+ })
  
 }
 

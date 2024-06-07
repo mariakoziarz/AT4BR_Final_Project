@@ -13,7 +13,8 @@ aminoacids <- data.frame(
   threeletter_code = c("Ala", "Cys", "Asp", "Glu", "Phe", 
                    "Gly", "His", "Ile", "Lys", "Leu", 
                    "Met", "Asn", "Pro", "Gln", "Arg", 
-                   "Ser", "Thr", "Val", "Trp", "Tyr")
+                   "Ser", "Thr", "Val", "Trp", "Tyr"),
+  stringsAsFactors = FALSE
 )
 
 server <- function(input, output, session) {
@@ -49,27 +50,36 @@ server <- function(input, output, session) {
 })
  
  output$question <- renderUI({
-   random_number <- runif(1, 1, 20)
-   if(random_number %in% values$no_repeats){
-     while (random_number %in% values$no_repeats) {
-       random_number <- runif(1, 1, 20)
-     }
-     append(values$no_repeats, random_number)
-   }
-   if(input$mode == "Structure"){
+   if(values$started){
+     random_number <- runif(1, 1, 20)
      
-     renderImage({
+     if(random_number %in% values$no_repeats){
+       while (random_number %in% values$no_repeats) {
+         random_number <- runif(1, 1, 20)
+       }
+       append(values$no_repeats, random_number)
+     }
+     
+     if(input$mode == "Structure"){
        filename <- normalizePath(file.path('./amino_acids/', 
                                            paste(aminoacids$threeletter_code[random_number], '.png', sep = '')))
-     })
-   } else if(input$mode == "One-letter code"){
-     h3(aminoacids$oneletter_code[random_number])
-   }else{
-     h3(aminoacids$threeletter_code[random_number])
+       
+       output$image <- renderImage({
+         list(src = filename, height = "400px", width = "500px")
+       }, deleteFile = FALSE)
+       
+       
+     } else if(input$mode == "One-letter code"){
+       h3(aminoacids$oneletter_code[random_number])
+     }else{
+       h3(aminoacids$threeletter_code[random_number])
+     }
    }
+   
  }
  )
  observeEvent(input$submit, {
+   current_question <- values$current_question
    correct_answers <- aminoacids$name[values$no_repeats[current_question]]
    input_answer <- input$answer
    

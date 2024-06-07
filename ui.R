@@ -14,10 +14,12 @@ ui <- fluidPage(
         selected = "mode",
       ),
       actionButton("start", "Start game")
+      
     ),
      mainPanel(
        uiOutput("game"),
        uiOutput("question"),
+       imageOutput("img"),
        tableOutput("results")
      )
   )

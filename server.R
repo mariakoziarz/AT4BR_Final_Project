@@ -23,7 +23,8 @@ server <- function(input, output, session) {
     current_question = 1,
     total_questions = 10,
     correct_answers = 0,
-    no_repeats = c(),
+    no_repeats = integer(0),
+    random_number = 0,
     answers = data.frame(question = character(10), answer = character(10), right_answer = character(10))
     
 
@@ -38,6 +39,7 @@ server <- function(input, output, session) {
    values$started <- TRUE
    values$current_question <- 1
    values$correct_answers <- 0
+   values$no_repeats <- integer(0)
    values$ answers <- data.frame(question = character(10), answer = character(10), right_answer = character(10))
    output$game <- renderUI({
      fluidPage(
@@ -51,18 +53,18 @@ server <- function(input, output, session) {
  
  output$question <- renderUI({
    if(values$started){
-     random_number <- runif(1, 1, 20)
+     values$random_number <- sample(1, 1, 20)
      
-     if(random_number %in% values$no_repeats){
-       while (random_number %in% values$no_repeats) {
-         random_number <- runif(1, 1, 20)
+     if(values$random_number %in% values$no_repeats){
+       while (values$random_number %in% values$no_repeats) {
+         values$random_number <- sample(1, 1, 20)
        }
-       append(values$no_repeats, random_number)
+       append(values$no_repeats, values$random_number)
      }
      
      if(input$mode == "Structure"){
        filename <- normalizePath(file.path('./amino_acids/', 
-                                           paste(aminoacids$threeletter_code[random_number], '.png', sep = '')))
+                                           paste(aminoacids$threeletter_code[values$random_number], '.png', sep = '')))
        
        output$image <- renderImage({
          list(src = filename, height = "400px", width = "500px")
@@ -70,9 +72,9 @@ server <- function(input, output, session) {
        
        
      } else if(input$mode == "One-letter code"){
-       h3(aminoacids$oneletter_code[random_number])
+       h3(aminoacids$oneletter_code[values$random_number])
      }else{
-       h3(aminoacids$threeletter_code[random_number])
+       h3(aminoacids$threeletter_code[values$random_number])
      }
    }
    
@@ -84,11 +86,11 @@ server <- function(input, output, session) {
    input_answer <- input$answer
    
    if(input$mode == "Structure"){
-     values$answers$question[values$current_question] <-("Structure of " + aminoacids$threeletter_code[random_number])
+     values$answers$question[values$current_question] <-aminoacids$threeletter_code[values$random_number]
    } else if (input$mode == "One-letter code") {
-     values$answers$question[values$current_question] <- aminoacids$oneletter_code[random_number]
+     values$answers$question[values$current_question] <- aminoacids$oneletter_code[values$random_number]
    }else {
-     values$answers$question[values$current_question] <- aminoacids$threeletter_code[random_number]
+     values$answers$question[values$current_question] <- aminoacids$threeletter_code[values$random_number]
    }
    values$answers$answer[values$current_question] <- input_answer
    values$answers$right_answer[values$current_question] <- correct_answers

@@ -21,7 +21,7 @@ server <- function(input, output, session) {
  values <- reactiveValues(
     started = FALSE,
     current_question = 1,
-    total_questions = 4,
+    total_questions = 10,
     correct_answers = 0,
     no_repeats = c(),
     random_number = NULL,
@@ -104,7 +104,7 @@ server <- function(input, output, session) {
    if(values$current_question < values$total_questions){
      
      values$current_question <- values$current_question + 1
-     print(values$random_number)
+     
      
      updateTextInput(session, "answer", value = "")
      isolate({
@@ -112,15 +112,18 @@ server <- function(input, output, session) {
      })
    } else {
      output$game <- renderUI({
-       h3("Results:")
+       tagList(h3("Results:"),
+       tableOutput("results")
+       )
      })
+     
      output$results <- renderTable({
+       req(values$current_question == values$total_questions)
        results <- ifelse(tolower(values$answers$answer) == tolower(values$answers$right_answer), "Right", "Wrong")
        cbind(values$answers, Results = results)
      })
    }
  })
- 
  
 }
 

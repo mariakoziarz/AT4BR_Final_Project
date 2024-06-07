@@ -17,10 +17,13 @@ ui <- fluidPage(
       
     ),
      mainPanel(
+       uiOutput("instructions"),
        uiOutput("game"),
+       tableOutput("results"),
        uiOutput("question"),
-       imageOutput("img"),
-       tableOutput("results")
+       
+       imageOutput("img")
+       
      )
   )
 )

@@ -29,9 +29,12 @@ server <- function(input, output, session) {
     
 
  )
- output$instructions <- renderUI({
+ output$instructions <- renderText({
    if(!values$started){
-     h4("Hello")
+     paste("<b>Welcome, young scientist!</b>", "<br>",
+"Now that you have entered the world of science, it is high time for you to acquire a skill that every scientist should have - the recognition of amino acids.", "<br>", "This game will help you in this seemingly difficult task.", 
+"<br>",  "Select the game mode and then press the <B>‘Start game'</B> button.", "<br>", " You will see a structure/one-letter code/three-letter code, depending on the option selected.", "<br>", " Enter the name of the corresponding amino acid in the box.", "<br>", 
+"<b>Have fun!</b>")
    }
  })
  
@@ -44,9 +47,13 @@ server <- function(input, output, session) {
    
    output$game <- renderUI({
      fluidPage(
+       renderText({
+         paste(values$current_question, "/", values$total_questions)
+       }),
        uiOutput("question"),
        textInput("answer", "Your answer: "),
        actionButton("submit", "Submit")
+       
      )
      
    })
@@ -76,10 +83,11 @@ server <- function(input, output, session) {
        imageOutput("image")
      } else if(input$mode == "One-letter code"){
        h3(aminoacids$oneletter_code[values$random_number])
-     } else {
+     } else if (input$mode == "Three-letter code"){
        h3(aminoacids$threeletter_code[values$random_number])
      }
    })
+   
  }
  
  observeEvent(input$submit, {

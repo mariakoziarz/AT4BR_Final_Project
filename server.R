@@ -32,9 +32,12 @@ server <- function(input, output, session) {
  output$instructions <- renderText({
    if(!values$started){
      paste("<b>Welcome, young scientist!</b>", "<br>",
-"Now that you have entered the world of science, it is high time for you to acquire a skill that every scientist should have - the recognition of amino acids.", "<br>", "This game will help you in this seemingly difficult task.", 
-"<br>",  "Select the game mode and then press the <B>‘Start game'</B> button.", "<br>", " You will see a structure/one-letter code/three-letter code, depending on the option selected.", "<br>", " Enter the name of the corresponding amino acid in the box.", "<br>", 
-"<b>Have fun!</b>")
+           "Now that you have entered the world of science, it is high time for you to acquire a skill that every scientist should have - the recognition of amino acids.", 
+           "<br>", "This game will help you in this seemingly difficult task.", 
+           "<br>",  "Select the game mode and then press the <B>‘Start game'</B> button.", "<br>", 
+           "You will see a structure/one-letter code/three-letter code, depending on the option selected.", "<br>", 
+           " Enter the name of the corresponding amino acid in the box.", "<br>", 
+           "<b>Have fun!</b>")
    }
  })
  

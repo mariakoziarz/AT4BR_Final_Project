@@ -1,6 +1,6 @@
 library(shiny)
 
-
+#list of amino acids
 aminoacids <- data.frame(
   name = c("Alanine", "Cysteine", "Aspartic acid", "Glutamic acid", "Phenylalanine", 
             "Glycine", "Histidine", "Isoleucine", "Lysine", "Leucine",
@@ -17,18 +17,21 @@ aminoacids <- data.frame(
   stringsAsFactors = FALSE
 )
 
+#defining the server logic
 server <- function(input, output, session) {
+  
+ #initialization of object with reactive values
  values <- reactiveValues(
-    started = FALSE,
+    started = FALSE, 
     current_question = 1,
     total_questions = 10,
     correct_answers = 0,
-    no_repeats = c(),
+    no_repeats = c(), #vector to store used random numbers
     random_number = NULL,
     answers = data.frame(question = character(10), answer = character(10), right_answer = character(10))
-    
-
+    #default values before starting the game
  )
+ #instructions displayed after running thr game
  output$instructions <- renderText({
    if(!values$started){
      paste("<b>Welcome, young scientist!</b>", "<br>",
@@ -40,7 +43,7 @@ server <- function(input, output, session) {
            "<b>Have fun!</b>")
    }
  })
- 
+ #action caused by clicking "Start game" button
  observeEvent(input$start,{
    values$started <- TRUE
    values$current_question <- 1
@@ -48,6 +51,7 @@ server <- function(input, output, session) {
    values$no_repeats <- c()
    values$ answers <- data.frame(question = character(10), answer = character(10), right_answer = character(10))
    
+   #default structure of output elements after starting the game
    output$game <- renderUI({
      fluidPage(
        renderText({
@@ -60,22 +64,24 @@ server <- function(input, output, session) {
      )
      
    })
+   #updating page after submit
    isolate({
      updateQuestion()
    })
 })
- 
+ #function to update page 
  updateQuestion <- function() {
-   values$random_number <- sample(1:20, 1)
+   values$random_number <- sample(1:20, 1) #drawing number of amino acid 
    
-   while (values$random_number %in% values$no_repeats) {
+   while (values$random_number %in% values$no_repeats) { #loop to avoid doubled questions
      values$random_number <- sample(1:20, 1)
    }
    
    values$no_repeats <- append(values$no_repeats, values$random_number)
    
-   output$question <- renderUI({
+   output$question <- renderUI({ #values apearing on the screen depending on choosen option
      if(input$mode == "Structure"){
+       #based on structure with random amino acids
        filename <- normalizePath(file.path('./amino_acids/', 
                                            paste(aminoacids$threeletter_code[values$random_number], '.png', sep = '')))
        
@@ -85,19 +91,21 @@ server <- function(input, output, session) {
        
        imageOutput("image")
      } else if(input$mode == "One-letter code"){
-       h3(aminoacids$oneletter_code[values$random_number])
+       h3(aminoacids$oneletter_code[values$random_number]) #displaying three-letter code
      } else if (input$mode == "Three-letter code"){
-       h3(aminoacids$threeletter_code[values$random_number])
+       h3(aminoacids$threeletter_code[values$random_number]) #displaying one-letter code
      }
    })
    
  }
  
+ #actions taken after submitting the answer
  observeEvent(input$submit, {
    
-   correct_answer <- aminoacids$name[values$no_repeats[values$current_question]]
+   correct_answer <- aminoacids$name[values$no_repeats[values$current_question]] 
    input_answer <- input$answer
    
+   #filling the dataframe table with correct answers, input answer and validation
    if(input$mode == "Structure"){
      values$answers$question[values$current_question] <-paste("Structure of", aminoacids$threeletter_code[values$random_number])
    } else if (input$mode == "One-letter code") {
@@ -107,12 +115,14 @@ server <- function(input, output, session) {
    }
    values$answers$answer[values$current_question] <- input_answer
    values$answers$right_answer[values$current_question] <- correct_answer
-
+    
+   
    if(tolower(input_answer) == tolower(correct_answer)){
      values$correct_answers <- values$correct_answers + 1
    }
    
-   if(values$current_question < values$total_questions){
+   #checking whether the game is finishes
+   if(values$current_question < values$total_questions){#if it isn't go to the next
      
      values$current_question <- values$current_question + 1
      
@@ -121,10 +131,11 @@ server <- function(input, output, session) {
      isolate({
        updateQuestion()
      })
-   } else {
+   } else { #if is display the results
      output$game <- renderUI({
        tagList(h3("Results:"),
        tableOutput("results")
+       
        )
      })
      
@@ -132,6 +143,9 @@ server <- function(input, output, session) {
        req(values$current_question == values$total_questions)
        results <- ifelse(tolower(values$answers$answer) == tolower(values$answers$right_answer), "Right", "Wrong")
        cbind(values$answers, Results = results)
+     })
+     output$score <- renderText({
+       paste("Score: ", values$correct_answers)
      })
    }
  })

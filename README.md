@@ -7,7 +7,13 @@ Advanced Toolkit for Bioinformatics Research
 
 ### Introduction
 The aim of this game is to help the begginiers in science,
-to learn the structures and the codes of protein aminoacids.
+to learn the structures and the codes of protein aminoacids. 
+When I started studying at university I struggled with learning all teh structures and codes of the aminoacids.
+So, as a gift to others I decided to creat a simple game to overcome this difficulties. 
+
+I hope someone will find it useful! 😃
+
+
 ### How to play :thinking:
 
 1. First thing that occurs when you run the game is the introduction and short manual.
